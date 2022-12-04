@@ -1,5 +1,6 @@
 module "bucket" {
-  source = "github.com/ptonini/terraform-aws-s3-bucket?ref=v1"
+  source = "ptonini/s3-bucket/aws"
+  version = "~> 1.0.0"
   name = var.bucket
   create_role = false
   force_destroy = var.force_destroy_bucket
@@ -9,7 +10,8 @@ module "bucket" {
 }
 
 module "certificate" {
-  source = "github.com/ptonini/terraform-aws-acm-certificate?ref=v1"
+  source = "ptonini/acm-certificate/aws"
+  version = "~> 1.0.0"
   domain_name = var.domain
   subject_alternative_names = var.alternative_domain_names
   route53_zone = var.route53_zone
@@ -79,7 +81,8 @@ resource "aws_cloudfront_distribution" "this" {
 }
 
 module "role" {
-  source = "github.com/ptonini/terraform-aws-iam-role?ref=v1"
+  source = "ptonini/iam-role/aws"
+  version = "~> 1.0.0"
   count = var.role_owner_arn != null ? 1 : 0
   assume_role_principal = {AWS = var.role_owner_arn}
   policy_statements = concat(module.bucket.access_policy_statements, [
@@ -101,7 +104,8 @@ module "role" {
 }
 
 module "dns_record" {
-  source = "github.com/ptonini/terraform-aws-route53-record?ref=v1"
+  source = "ptonini/route53-record/aws"
+  version = "~> 1.0.0"
   for_each = toset(var.cloudfront_enabled ? concat([var.domain], var.alternative_domain_names) : [])
   name = each.key
   route53_zone = var.route53_zone
