@@ -1,11 +1,11 @@
-variable name {}
+variable "name" {}
 
 variable "bucket" {}
 
 variable "domain" {}
 
 variable "alternative_domain_names" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
@@ -25,7 +25,7 @@ variable "default_root_object" {
 
 variable "origin_paths" {
   default = ["/www"]
-  type = list(string)
+  type    = list(string)
 }
 
 variable "cloudfront_enabled" {
@@ -35,11 +35,11 @@ variable "cloudfront_enabled" {
 variable "geo_restriction" {
   type = object({
     locations = list(string)
-    type = string
+    type      = string
   })
   default = {
     locations = []
-    type = "none"
+    type      = "none"
   }
 }
 
