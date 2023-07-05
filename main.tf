@@ -1,6 +1,6 @@
 module "bucket" {
   source        = "ptonini/s3-bucket/aws"
-  version       = "~> 1.0.0"
+  version       = "~> 1.2.0"
   name          = var.bucket
   create_role   = false
   force_destroy = var.force_destroy_bucket
