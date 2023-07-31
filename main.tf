@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
   logging_config {
     include_cookies = false
-    bucket          = "${module.bucket.this.bucket}.s3.amazonaws.com"
+    bucket          = module.bucket.this.bucket_domain_name
     prefix          = "access_logs"
   }
   default_cache_behavior {
