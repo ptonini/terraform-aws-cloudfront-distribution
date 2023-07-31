@@ -3,6 +3,7 @@ module "bucket" {
   version       = "~> 1.3.0"
   name          = var.bucket
   create_role   = false
+  create_policy = true
   force_destroy = var.force_destroy_bucket
   providers = {
     aws = aws.current
