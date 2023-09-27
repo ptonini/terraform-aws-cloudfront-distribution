@@ -9,23 +9,23 @@ variable "alternative_domain_names" {
   default = []
 }
 
-variable "role_owner_arn" {
-  default = null
-}
-
-variable "vault_role" {
-  default = null
-}
-
 variable "route53_zone" {}
 
 variable "default_root_object" {
   default = "index.html"
 }
 
+variable "error_response_page_path" {
+  default = null
+}
+
 variable "origin_paths" {
   default = ["/www"]
   type    = list(string)
+}
+
+variable "logging_config_prefix" {
+  default = "access_logs"
 }
 
 variable "cloudfront_enabled" {

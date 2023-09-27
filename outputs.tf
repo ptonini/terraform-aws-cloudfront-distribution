@@ -3,13 +3,10 @@ output "this" {
 }
 
 output "bucket" {
-  value = module.bucket.this
+  value = module.bucket.this.bucket
 }
 
-output "bucket_policy_arn" {
-  value = module.bucket.policy_arn
+output "policy_arn" {
+  value = module.policy.this.arn
 }
 
-output "role_arn" {
-  value = try(module.role[0].this.arn, null)
-}

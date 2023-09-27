@@ -1,8 +1,7 @@
 module "bucket" {
   source        = "ptonini/s3-bucket/aws"
-  version       = "~> 1.3.0"
+  version       = "~> 2.0.0"
   name          = var.bucket
-  create_role   = false
   create_policy = true
   force_destroy = var.force_destroy_bucket
   providers = {
@@ -32,12 +31,12 @@ resource "aws_cloudfront_distribution" "this" {
     error_caching_min_ttl = 60
     error_code            = 403
     response_code         = 200
-    response_page_path    = "/${var.default_root_object}"
+    response_page_path    = coalesce(var.error_response_page_path, "/${var.default_root_object}")
   }
   logging_config {
     include_cookies = false
     bucket          = module.bucket.this.bucket_domain_name
-    prefix          = "access_logs"
+    prefix          = var.logging_config_prefix
   }
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
@@ -81,24 +80,24 @@ resource "aws_cloudfront_distribution" "this" {
   }
 }
 
-module "role" {
-  source                = "ptonini/iam-role/aws"
-  version               = "~> 1.0.0"
-  count                 = var.role_owner_arn != null ? 1 : 0
-  assume_role_principal = { AWS = var.role_owner_arn }
-  policy_statements = concat(module.bucket.access_policy_statements, [
-    {
-      Effect   = "Allow"
-      Action   = ["cloudfront:ListDistributions"]
-      Resource = ["*"]
-    },
-    {
-      Effect   = "Allow"
-      Action   = ["cloudfront:CreateInvalidation"]
-      Resource = [aws_cloudfront_distribution.this.arn]
-    }
-  ])
-  vault_role = var.vault_role
+module "policy" {
+  source  = "ptonini/iam-policy/aws"
+  version = "~> 1.0.0"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = concat(module.bucket.access_policy_statements, [
+      {
+        Effect   = "Allow"
+        Action   = ["cloudfront:ListDistributions"]
+        Resource = ["*"]
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["cloudfront:CreateInvalidation"]
+        Resource = [aws_cloudfront_distribution.this.arn]
+      }
+    ])
+  })
   providers = {
     aws = aws.current
   }
