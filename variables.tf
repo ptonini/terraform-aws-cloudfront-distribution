@@ -78,10 +78,10 @@ variable "logging_config" {
 
 variable "geo_restriction" {
   type = object({
-    locations = optional(set(string))
-    type      = optional(string)
+    locations = optional(set(string), [])
+    type      = optional(string, "none")
   })
-  default = null
+  default = {}
 }
 
 variable "viewer_certificate" {
