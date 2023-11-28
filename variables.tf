@@ -64,6 +64,7 @@ variable "default_cache_behavior" {
       }), {})
     }), {})
   })
+  default = {}
 }
 
 variable "logging_config" {
