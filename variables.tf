@@ -71,7 +71,7 @@ variable "logging_config" {
   type = object({
     include_cookies = optional(bool, false)
     bucket          = optional(string)
-    prefix          = optional(string)
+    prefix          = optional(string, "access_logs")
   })
   default = {}
 }
