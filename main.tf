@@ -3,6 +3,13 @@ module "bucket" {
   version       = "~> 2.1.0"
   count         = var.bucket == null ? 0 : 1
   name          = var.bucket.name
+  bucket_policy_statements = [{
+    Sid       = "PublicReadGetObject"
+    Effect    = "Allow"
+    Principal = "*"
+    Action    = ["s3:GetObject"],
+    Resource  = ["arn:aws:s3:::${var.bucket.name}${var.origins["0"].path}/*"]
+  }]
   create_policy = var.bucket.create_policy
   force_destroy = var.bucket.force_destroy
 }
