@@ -1,8 +1,8 @@
 module "bucket" {
-  source        = "ptonini/s3-bucket/aws"
-  version       = "~> 2.1.0"
-  count         = var.bucket == null ? 0 : 1
-  name          = var.bucket.name
+  source  = "ptonini/s3-bucket/aws"
+  version = "~> 2.1.0"
+  count   = var.bucket == null ? 0 : 1
+  name    = var.bucket.name
   bucket_policy_statements = [{
     Sid       = "PublicReadGetObject"
     Effect    = "Allow"
@@ -46,11 +46,11 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "logging_config" {
-    for_each = var.logging_config == null ? [] : [0]
+    for_each = var.logging_config[*]
     content {
-      include_cookies = var.logging_config.include_cookies
-      bucket          = coalesce(var.logging_config.bucket, module.bucket[0].this.bucket_domain_name)
-      prefix          = var.logging_config.prefix
+      include_cookies = logging_config.value.include_cookies
+      bucket          = coalesce(logging_config.value.bucket, module.bucket[0].this.bucket_domain_name)
+      prefix          = logging_config.value.prefix
     }
   }
 
@@ -96,7 +96,7 @@ module "policy" {
   source  = "ptonini/iam-policy/aws"
   version = "~> 2.0.0"
   name    = "cloudfront-policy-${aws_cloudfront_distribution.this.id}"
-  statement = concat(one(module.bucket[*].policy_statement), [
+  statement = concat(var.bucket == null ? [] : module.bucket[0].policy_statement, [
     {
       Effect   = "Allow"
       Action   = ["cloudfront:ListDistributions"]
